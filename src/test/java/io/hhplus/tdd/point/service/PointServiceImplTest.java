@@ -45,7 +45,8 @@ class PointServiceImplTest {
     public void testUserPointTable() {
         // given
         long userId = 1L;
-        UserPoint expectedPoint = new UserPoint(userId, 1000L, System.currentTimeMillis());
+        long amount = 1000L;
+        UserPoint expectedPoint = new UserPoint(userId, amount, System.currentTimeMillis());
 
         // when
         when(userPointTable.selectById(userId)).thenReturn(expectedPoint);
@@ -53,8 +54,12 @@ class PointServiceImplTest {
         UserPoint actualPoint = pointService.getUserPoint(userId);
 
         // then
-        assertThat(actualPoint.getId(), is(userId));
+        assertThat(actualPoint.getId(), is(expectedPoint.getId()));
         assertThat(actualPoint.getPoint(), is(expectedPoint.getPoint()));
     }
+
+
+
+
 
 }
