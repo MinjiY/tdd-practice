@@ -4,6 +4,7 @@ import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.UserPoint;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +15,11 @@ public class PointService {
     private final PointHistoryTable pointHistoryTable;
 
     public UserPoint getUserPoint(long userId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new UserPoint(
+                userId,
+                1000L,
+                System.currentTimeMillis()
+        );
     }
 
 }
