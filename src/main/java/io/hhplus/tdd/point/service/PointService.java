@@ -15,11 +15,7 @@ public class PointService {
     private final PointHistoryTable pointHistoryTable;
 
     public UserPoint getUserPoint(long userId) {
-        return new UserPoint(
-                userId,
-                1000L,
-                System.currentTimeMillis()
-        );
+        return userPointTable.selectById(userId);
     }
 
 }
