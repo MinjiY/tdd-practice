@@ -40,4 +40,21 @@ class PointServiceImplTest {
         assertThat(actualPoint.getId(), is(userId));
     }
 
+    @Test
+    @DisplayName("유저 포인트 조회 테스트 - when을 통한 동작 검증")
+    public void testUserPointTable() {
+        // given
+        long userId = 1L;
+        UserPoint expectedPoint = new UserPoint(userId, 1000L, System.currentTimeMillis());
+
+        // when
+        when(userPointTable.selectById(userId)).thenReturn(expectedPoint);
+
+        UserPoint actualPoint = pointService.getUserPoint(userId);
+
+        // then
+        assertThat(actualPoint.getId(), is(userId));
+        assertThat(actualPoint.getPoint(), is(expectedPoint.getPoint()));
+    }
+
 }
