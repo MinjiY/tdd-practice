@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,6 +59,36 @@ class PointServiceImplTest {
         assertThat(actualPoint.getId(), is(expectedPoint.getId()));
         assertThat(actualPoint.getPoint(), is(expectedPoint.getPoint()));
     }
+
+//    @Test
+//    @DisplayName("유저 포인트 조회 테스트 - 예외 상황")
+//    public void testGetUserPointException() {
+//        // given
+//        long userId = 1L;
+//
+//        // when
+//        when(userPointTable.selectById(userId)).thenThrow(new ResourceNotFoundException("404","user point not found"));
+//
+//        // then
+//        assertThrows(ResourceNotFoundException.class, () -> {
+//            pointService.getUserPoint(userId);
+//        });
+//    }
+
+
+    @Test
+    @DisplayName("유저 포인트 충전/이용 내역 조회 테스트 - ")
+    public void testGetPointHistory() {
+        // given
+        long userId = 1L;
+
+        // when
+        List<PointHistory> histories = pointService.getHistories(userId);
+
+        // then
+        assertTrue(histories.isEmpty());
+    }
+
 
 
 
