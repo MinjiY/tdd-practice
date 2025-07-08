@@ -2,6 +2,8 @@ package io.hhplus.tdd.point.service;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.point.PointHistory;
+import io.hhplus.tdd.point.TransactionType;
 import io.hhplus.tdd.point.UserPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,6 +89,32 @@ class PointServiceImplTest {
 
         // then
         assertTrue(histories.isEmpty());
+    }
+
+    @Test
+    @DisplayName("유저 포인트/충전 이용 내역을 정상적으로 반환한다.")
+    public void testGetHistories() {
+        // given
+        long pointHistoryId = 1L;
+        long userId = 1L;
+        long amount = 1000L;
+        TransactionType type = TransactionType.CHARGE;
+
+        List<PointHistory> expectedHistories = List.of(
+                new PointHistory(pointHistoryId, userId, amount, type, System.currentTimeMillis())
+        );
+
+        // when
+        when(pointHistoryTable.selectAllByUserId(userId)).thenReturn(expectedHistories);
+
+        List<PointHistory> actualHistories = pointService.getHistories(userId);
+
+        // then
+        assertThat(actualHistories.size(), is(1));
+        assertThat(actualHistories.get(0).userId(), is(expectedHistories.get(0).userId()));
+        assertThat(actualHistories.get(0).amount(), is(expectedHistories.get(0).amount()));
+        assertThat(actualHistories.get(0).type(), is(expectedHistories.get(0).type()));
+        assertThat(actualHistories.get(0).updateMillis(), is(expectedHistories.get(0).updateMillis()));
     }
 
 
