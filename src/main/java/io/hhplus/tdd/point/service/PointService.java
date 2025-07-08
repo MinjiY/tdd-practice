@@ -43,10 +43,6 @@ public class PointService {
      * 특정 유저의 포인트를 사용하는 기능
      */
     public UserPoint use(long id, long amount) {
-        return new UserPoint(
-                id,
-                amount,
-                System.currentTimeMillis()
-        );
+        return userPointTable.insertOrUpdate(id, amount);
     }
 }
