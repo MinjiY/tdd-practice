@@ -136,8 +136,18 @@ class PointServiceImplTest {
     }
 
 
+    @Test
+    @DisplayName("유저 포인트 충전 기능 반환값은 정상적으로 반환되어야 한다.")
+    public void testChargeUserPoint() {
+        // given
+        long userId = 1L;
+        long amount = 1000L;
 
+        // when
+        UserPoint userPoint = pointService.charge(userId, amount);
 
-
-
+        // then
+        assertThat(userPoint.getId(), is(userId));
+        assertThat(userPoint.getPoint(), is(amount));
+    }
 }
