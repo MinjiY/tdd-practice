@@ -244,4 +244,19 @@ class PointServiceImplTest {
         inOrder.verify(userPointTable).insertOrUpdate(userId, amount);
         inOrder.verify(pointHistoryTable).insert(eq(userId), eq(amount), eq(TransactionType.CHARGE), anyLong());
     }
+
+    @Test
+    @DisplayName("포인트 사용 서비스는 정상적인 값을 반환해야한다.")
+    public void testUseUserPoint() {
+        // given
+        long userId = 1L;
+        long amount = 500L;
+
+        // when
+        UserPoint userPoint = pointService.use(userId, amount);
+
+        // then
+        assertThat(userPoint.getId(), is(userId));
+        assertThat(userPoint.getPoint(), is(amount));
+    }
 }
