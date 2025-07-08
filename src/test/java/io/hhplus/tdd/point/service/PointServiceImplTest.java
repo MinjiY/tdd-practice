@@ -266,7 +266,7 @@ class PointServiceImplTest {
         // given
         long userId = 1L;
         long amount = 500L;
-        
+
         UserPoint expectedUserPoint = new UserPoint(userId, amount, System.currentTimeMillis());
 
         // when
@@ -277,5 +277,29 @@ class PointServiceImplTest {
         verify(userPointTable).insertOrUpdate(userId, amount);
         assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
+    }
+
+    @Test
+    @DisplayName("포인트 사용 서비스는 갖고있는 포인트가 있을때에만 성공해야한다.")
+    public void testUsePointValidation() {
+        // given
+        long userId = 1L;
+        long initialPoint = 1000L;
+        long useAmount = 500L;
+
+        UserPoint beforeUserPoint = new UserPoint(userId, initialPoint, System.currentTimeMillis());
+        UserPoint afterUserPoint = new UserPoint(userId, initialPoint - useAmount, System.currentTimeMillis());
+
+        when(userPointTable.selectById(userId)).thenReturn(beforeUserPoint);
+        when(userPointTable.insertOrUpdate(userId, useAmount)).thenReturn(afterUserPoint);
+        // when
+
+        UserPoint actualUserPoint = pointService.use(userId, useAmount);
+
+        // then
+        verify(userPointTable).selectById(userId);
+        verify(userPointTable).insertOrUpdate(userId, useAmount);
+        assertThat(actualUserPoint.getId(), is(afterUserPoint.getId()));
+        assertThat(actualUserPoint.getPoint(), is(afterUserPoint.getPoint()));
     }
 }
