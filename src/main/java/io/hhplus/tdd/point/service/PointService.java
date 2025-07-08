@@ -26,7 +26,7 @@ public class PointService {
      * 특정 유저의 포인트 충전/이용 내역을 조회
      */
     public List<PointHistory> getHistories (long id) {
-        throw new UnsupportedOperationException("충전 기능은 아직 구현되지 않았습니다.");
+        return List.of();
     }
 
 }
