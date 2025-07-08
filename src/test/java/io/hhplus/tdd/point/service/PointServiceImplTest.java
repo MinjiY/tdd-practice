@@ -157,7 +157,7 @@ class PointServiceImplTest {
         // given
         long userId = 1L;
         long amount = 1000L;
-        UserPoint expectedUserPoint = pointService.charge(userId, amount);
+        UserPoint expectedUserPoint = new UserPoint(userId, amount, System.currentTimeMillis());
 
         // when
         when(userPointTable.insertOrUpdate(userId, amount)).thenReturn(expectedUserPoint);
