@@ -33,6 +33,10 @@ public class PointService {
      * 특정 유저의 포인트를 충전하는 기능
      */
     public UserPoint charge(long id, long amount) {
-        throw new UnsupportedOperationException("충전 기능은 아직 구현되지 않았습니다.");
+        return new UserPoint(
+                id,
+                amount,
+                System.currentTimeMillis()
+        );
     }
 }
