@@ -259,4 +259,23 @@ class PointServiceImplTest {
         assertThat(userPoint.getId(), is(userId));
         assertThat(userPoint.getPoint(), is(amount));
     }
+
+    @Test
+    @DisplayName("포인트 사용 서비스는 내부적으로 userPoint.insertOrUpdate 메서드를 호출하고 정상적인 값을 반환해야한다.")
+    public void testUseUserPointUpdate() {
+        // given
+        long userId = 1L;
+        long amount = 500L;
+        
+        UserPoint expectedUserPoint = new UserPoint(userId, amount, System.currentTimeMillis());
+
+        // when
+        when(userPointTable.insertOrUpdate(userId, amount)).thenReturn(expectedUserPoint);
+        UserPoint actualUserPoint = pointService.use(userId, amount);
+
+        // then
+        verify(userPointTable).insertOrUpdate(userId, amount);
+        assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
+        assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
+    }
 }
