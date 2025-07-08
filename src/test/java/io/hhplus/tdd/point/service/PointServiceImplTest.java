@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -223,5 +224,24 @@ class PointServiceImplTest {
         assertThat(userIdCaptor.getValue(), is(userId));
         assertThat(amountCaptor.getValue(), is(amount));
         assertThat(typeCaptor.getValue(), is(type));
+    }
+
+
+    @Test
+    @DisplayName("충전 기록보다 포인트 충전 여부가 먼저 결정되어야 한다.")
+    void testChargeMethodCallOrder() {
+        // given
+        long userId = 1L;
+        long amount = 1000L;
+        UserPoint expectedUserPoint = new UserPoint(userId, amount, System.currentTimeMillis());
+        when(userPointTable.insertOrUpdate(userId, amount)).thenReturn(expectedUserPoint);
+
+        // when
+        pointService.charge(userId, amount);
+
+        // then
+        InOrder inOrder = inOrder(userPointTable, pointHistoryTable);
+        inOrder.verify(userPointTable).insertOrUpdate(userId, amount);
+        inOrder.verify(pointHistoryTable).insert(eq(userId), eq(amount), eq(TransactionType.CHARGE), anyLong());
     }
 }
