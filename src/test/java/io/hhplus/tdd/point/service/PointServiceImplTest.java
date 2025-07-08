@@ -169,4 +169,25 @@ class PointServiceImplTest {
         assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
     }
+
+    @Test
+    @DisplayName("유저 포인트 충전시 PointHistory가 기록되어야한다.")
+    public void testInsertChargeHistory() {
+        // given
+        long pointHistoryId = 1L;
+
+        // when
+        when(pointHistoryTable.insert(anyLong(), anyLong(), eq(TransactionType.CHARGE), anyLong())).thenAnswer(invocation -> {
+            long userIdArg = invocation.getArgument(0);
+            long amountArg = invocation.getArgument(1);
+            TransactionType typeArg = invocation.getArgument(2);
+            long updateMillisArg = invocation.getArgument(3);
+            return new PointHistory(pointHistoryId, userIdArg, amountArg, typeArg, updateMillisArg);
+        });
+
+        pointService.charge(1L, 1000L);
+
+        // then
+        verify(pointHistoryTable).insert(anyLong(), anyLong(), eq(TransactionType.CHARGE), anyLong());
+    }
 }
