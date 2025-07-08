@@ -118,6 +118,23 @@ class PointServiceImplTest {
         assertThat(actualHistories.get(0).updateMillis(), is(expectedHistories.get(0).updateMillis()));
     }
 
+    @Test
+    @DisplayName("유저 포인트/충전 이용 내역의 시간 값은 현재 시간보다 이전이어야 한다.")
+    public void testHistoriesTime() {
+        // given
+        List<PointHistory> expectedHistories = List.of(
+                new PointHistory(1L, 1L, 1000L, TransactionType.CHARGE, System.currentTimeMillis() + 1000L)
+        );
+
+        // when
+        when(pointHistoryTable.selectAllByUserId(1L)).thenReturn(expectedHistories);
+
+        List<PointHistory> actualHistories = pointService.getHistories(1L);
+
+        // then
+        assertTrue(actualHistories.get(0).updateMillis() < System.currentTimeMillis());
+    }
+
 
 
 
