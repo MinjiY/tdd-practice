@@ -150,4 +150,23 @@ class PointServiceImplTest {
         assertThat(userPoint.getId(), is(userId));
         assertThat(userPoint.getPoint(), is(amount));
     }
+
+    @Test
+    @DisplayName("유저 포인트 충전 기능의 insert 로직은 정상적으로 호출되어야한다.")
+    public void testInsertUserPoint() {
+        // given
+        long userId = 1L;
+        long amount = 1000L;
+        UserPoint expectedUserPoint = pointService.charge(userId, amount);
+
+        // when
+        when(userPointTable.insertOrUpdate(userId, amount)).thenReturn(expectedUserPoint);
+
+        UserPoint actualUserPoint = pointService.charge(userId, amount);
+
+        // then
+        verify(userPointTable).insertOrUpdate(userId, amount);
+        assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
+        assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
+    }
 }
