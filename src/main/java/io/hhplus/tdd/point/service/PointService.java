@@ -26,7 +26,7 @@ public class PointService {
      * 특정 유저의 포인트 충전/이용 내역을 조회
      */
     public List<PointHistory> getHistories (long id) {
-        return List.of();
+        return pointHistoryTable.selectAllByUserId(id);
     }
 
 }
