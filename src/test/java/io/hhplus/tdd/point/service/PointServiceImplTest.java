@@ -123,7 +123,7 @@ class PointServiceImplTest {
     public void testHistoriesTime() {
         // given
         List<PointHistory> expectedHistories = List.of(
-                new PointHistory(1L, 1L, 1000L, TransactionType.CHARGE, System.currentTimeMillis() + 1000L)
+                new PointHistory(1L, 1L, 1000L, TransactionType.CHARGE, System.currentTimeMillis() - 1000L)
         );
 
         // when
