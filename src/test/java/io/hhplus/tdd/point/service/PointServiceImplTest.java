@@ -280,8 +280,8 @@ class PointServiceImplTest {
     }
 
     @Test
-    @DisplayName("포인트 사용 서비스는 갖고있는 포인트가 있을때에만 성공해야한다.")
-    public void testUsePointValidation() {
+    @DisplayName("포인트 사용 서비스는 갖고있는 포인트에서 차감해야한다.")
+    public void testUsePoint() {
         // given
         long userId = 1L;
         long initialPoint = 1000L;
