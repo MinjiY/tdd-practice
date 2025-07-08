@@ -17,7 +17,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PointServiceImplTest {
@@ -110,6 +110,7 @@ class PointServiceImplTest {
         List<PointHistory> actualHistories = pointService.getHistories(userId);
 
         // then
+        verify(pointHistoryTable).selectAllByUserId(userId);
         assertThat(actualHistories.size(), is(1));
         assertThat(actualHistories.get(0).userId(), is(expectedHistories.get(0).userId()));
         assertThat(actualHistories.get(0).amount(), is(expectedHistories.get(0).amount()));
