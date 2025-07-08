@@ -8,6 +8,7 @@ import io.hhplus.tdd.point.UserPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -189,5 +190,38 @@ class PointServiceImplTest {
 
         // then
         verify(pointHistoryTable).insert(anyLong(), anyLong(), eq(TransactionType.CHARGE), anyLong());
+    }
+
+    @Test
+    @DisplayName("charge 호출 시 pointHistoryTable.insert에 전달된 값이 올바른지 검증한다.")
+    void testChargePointHistoryInsertArguments() {
+        // given
+        long userId = 1L;
+        long amount = 1000L;
+        TransactionType type = TransactionType.CHARGE;
+        // ArgumentCaptor로 전달된 값 캡처
+        ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Long> amountCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<TransactionType> typeCaptor = ArgumentCaptor.forClass(TransactionType.class);
+        ArgumentCaptor<Long> updateMillisCaptor = ArgumentCaptor.forClass(Long.class);
+
+
+        UserPoint expectedUserPoint = new UserPoint(userId, amount, System.currentTimeMillis());
+        when(userPointTable.insertOrUpdate(userId, amount)).thenReturn(expectedUserPoint);
+
+        // when
+        pointService.charge(userId, amount);
+
+        // then
+        verify(pointHistoryTable).insert(
+                userIdCaptor.capture(),
+                amountCaptor.capture(),
+                typeCaptor.capture(),
+                updateMillisCaptor.capture()
+        );
+
+        assertThat(userIdCaptor.getValue(), is(userId));
+        assertThat(amountCaptor.getValue(), is(amount));
+        assertThat(typeCaptor.getValue(), is(type));
     }
 }
