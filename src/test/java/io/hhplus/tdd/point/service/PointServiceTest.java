@@ -312,7 +312,7 @@ class PointServiceTest {
         long userId = 1L;
         long initialPoint = 1000L;
         long useAmount = 500L;
-        long useTime = System.currentTimeMillis();
+        long useTime = 123456789L;
 
         UserPoint beforeUserPoint = new UserPoint(userId, initialPoint, useTime - 1000);
         UserPoint afterUserPoint = new UserPoint(userId, initialPoint - useAmount, useTime);
