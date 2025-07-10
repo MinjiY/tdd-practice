@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -301,5 +302,25 @@ class PointServiceImplTest {
         verify(userPointTable).insertOrUpdate(userId, useAmount);
         assertThat(actualUserPoint.getId(), is(afterUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(afterUserPoint.getPoint()));
+    }
+
+    @Test
+    @DisplayName("포인트 사용 서비스는 사용요청 포인트보다 갖고있는 포인트가 작을 때 예외를 발생시켜야 한다.")
+    public void testUsePointThrows() {
+        // given
+        long userId = 1L;
+        long initialPoint = 500L;
+        long useAmount = 1000L;
+
+        UserPoint beforeUserPoint = new UserPoint(userId, initialPoint, System.currentTimeMillis());
+
+        // when
+        when(userPointTable.selectById(userId)).thenReturn(beforeUserPoint);
+
+        // then
+        assertThrows(IllegalArgumentException.class, () -> {
+            pointService.use(userId, useAmount);
+        });
+
     }
 }
