@@ -117,7 +117,9 @@ class PointServiceTest {
         long userId = 1L;
         long amount = 100L;
 
+        UserPoint initialUserPoint = new UserPoint(userId, 0L, System.currentTimeMillis());
         UserPoint expectedUserPoint = new UserPoint(userId, amount, System.currentTimeMillis());
+        when(userPointTable.selectById(userId)).thenReturn(initialUserPoint);
         when(userPointTable.insertOrUpdate(userId, amount)).thenReturn(expectedUserPoint);
 
 
