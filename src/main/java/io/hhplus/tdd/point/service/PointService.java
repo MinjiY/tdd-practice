@@ -35,4 +35,13 @@ public class PointService {
         return userPointTable.selectById(userId);
     }
 
+    /**
+     * 특정 유저의 포인트 충전/이용 내역을 조회하는 기능
+     *
+     * @param userId 유저 ID
+     * @return List<PointHistory> 포인트 내역 리스트
+     */
+    public List<PointHistory> getUserPointHistories(long userId) {
+        throw new UnsupportedOperationException("해당 기능은 아직 구현되지 않았습니다.");
+    }
 }
