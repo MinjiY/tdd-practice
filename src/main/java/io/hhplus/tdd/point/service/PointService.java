@@ -68,6 +68,7 @@ public class PointService {
      * @return UserPoint 객체
      */
     public UserPoint useUserPoint(long userId, long amount) {
-        throw new UnsupportedOperationException("포인트 이용 기능은 아직 구현되지 않았습니다.");
+        UserPoint userPoint = userPointTable.selectById(userId);
+        return userPointTable.insertOrUpdate(userId, userPoint.getPoint() - amount);
     }
 }
