@@ -180,8 +180,11 @@ class PointServiceImplTest {
     public void testInsertChargeHistory() {
         // given
         long pointHistoryId = 1L;
+//        UserPoint userPoint = userPointTable.insertOrUpdate(id, amount);
+
 
         // when
+        when(userPointTable.insertOrUpdate(anyLong(), anyLong())).thenReturn(new UserPoint(1L, 1000L, System.currentTimeMillis()));
         when(pointHistoryTable.insert(anyLong(), anyLong(), eq(TransactionType.CHARGE), anyLong())).thenAnswer(invocation -> {
             long userIdArg = invocation.getArgument(0);
             long amountArg = invocation.getArgument(1);
@@ -323,6 +326,5 @@ class PointServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> {
             pointService.use(userId, useAmount);
         });
-
     }
 }
