@@ -69,6 +69,9 @@ public class PointService {
      */
     public UserPoint useUserPoint(long userId, long amount) {
         UserPoint userPoint = userPointTable.selectById(userId);
+        if(userPoint.getPoint() < amount) {
+            throw new IllegalArgumentException("400", "포인트가 부족합니다.");
+        }
         return userPointTable.insertOrUpdate(userId, userPoint.getPoint() - amount);
     }
 }
