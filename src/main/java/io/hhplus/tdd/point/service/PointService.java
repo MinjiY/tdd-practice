@@ -53,6 +53,9 @@ public class PointService {
      * @return UserPoint 객체
      */
     public UserPoint chargeUserPoint(long userId, long amount) {
+        if(amount <= 0){
+            throw new IllegalArgumentException("400", "충전 금액은 0보다 큰 정수여야 합니다.");
+        }
         return userPointTable.insertOrUpdate(userId, amount);
     }
 }
