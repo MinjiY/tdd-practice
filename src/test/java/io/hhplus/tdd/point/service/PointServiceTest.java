@@ -123,6 +123,7 @@ class PointServiceTest {
         UserPoint actualUserPoint = pointService.chargeUserPoint(userId, amount);
 
         // then
+        verify(userPointTable).insertOrUpdate(expectedUserPoint.getId(), expectedUserPoint.getPoint());
         assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
     }

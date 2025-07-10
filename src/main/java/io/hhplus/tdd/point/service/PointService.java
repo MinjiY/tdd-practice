@@ -53,6 +53,6 @@ public class PointService {
      * @return UserPoint 객체
      */
     public UserPoint chargeUserPoint(long userId, long amount) {
-        throw new UnsupportedOperationException("충전 기능은 아직 구현되지 않았습니다.");
+        return userPointTable.insertOrUpdate(userId, amount);
     }
 }
