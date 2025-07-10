@@ -56,6 +56,8 @@ public class PointService {
         if(amount <= 0){
             throw new IllegalArgumentException("400", "충전 금액은 0보다 큰 정수여야 합니다.");
         }
-        return userPointTable.insertOrUpdate(userId, amount);
+        UserPoint userPoint = userPointTable.selectById(userId);
+
+        return userPointTable.insertOrUpdate(userId, userPoint.getPoint() + amount);
     }
 }
