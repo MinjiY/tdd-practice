@@ -42,6 +42,6 @@ public class PointService {
      * @return List<PointHistory> 포인트 내역 리스트
      */
     public List<PointHistory> getUserPointHistories(long userId) {
-        throw new UnsupportedOperationException("해당 기능은 아직 구현되지 않았습니다.");
+        return pointHistoryTable.selectAllByUserId(userId);
     }
 }
