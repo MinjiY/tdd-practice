@@ -20,4 +20,8 @@ public class PointService {
     private final PointHistoryTable pointHistoryTable;
 
 
+    public UserPoint getUserPoint(long userId) {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
 }
