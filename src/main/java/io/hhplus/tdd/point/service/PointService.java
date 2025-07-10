@@ -2,7 +2,7 @@ package io.hhplus.tdd.point.service;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
-import io.hhplus.tdd.exception.ResourceNotFoundException;
+import io.hhplus.tdd.exception.IllegalArgumentException;
 import io.hhplus.tdd.point.PointHistory;
 import io.hhplus.tdd.point.TransactionType;
 import io.hhplus.tdd.point.UserPoint;
@@ -44,6 +44,9 @@ public class PointService {
      */
     public UserPoint use(long id, long amount) {
         UserPoint userPoint = userPointTable.selectById(id);
+        if(userPoint.getPoint() < amount) {
+            throw new IllegalArgumentException("400","포인트가 부족합니다.");
+        }
         return userPointTable.insertOrUpdate(id, userPoint.getPoint()-amount);
     }
 }
