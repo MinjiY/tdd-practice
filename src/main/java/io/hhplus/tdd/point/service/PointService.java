@@ -21,6 +21,13 @@ public class PointService {
     private final PointHistoryTable pointHistoryTable;
 
 
+    /**
+     * 특정 유저의 포인트를 조회하는 기능
+     *
+     * @param userId 유저 ID
+     * @return UserPoint 객체
+     * @throws IllegalArgumentException 유효하지 않은 userId인 경우
+     */
     public UserPoint getUserPoint(long userId) {
         if(userId <= 0) {
             throw new IllegalArgumentException("400", "UserId는 0보다 큰 정수여야 합니다.");
