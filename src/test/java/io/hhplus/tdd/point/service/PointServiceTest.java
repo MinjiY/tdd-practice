@@ -128,4 +128,17 @@ class PointServiceTest {
         assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
     }
 
+    @Test
+    @DisplayName("충전하는 포인트는 0보다 큰 정수가 아니라면 IllegalArgumentException이 발생한다.")
+    public void testUserPointChargeInvalid() {
+        // given
+        long userId = 1L;
+        long amount = 0L;
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            pointService.chargeUserPoint(userId, amount);
+        });
+
+    }
+
 }
