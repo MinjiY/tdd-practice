@@ -152,7 +152,7 @@ class PointServiceTest {
 
         UserPoint expectedAmount = new UserPoint(userId, initialAmount + chargeAmount, System.currentTimeMillis());
         when(userPointTable.selectById(userId)).thenReturn(new UserPoint(userId, initialAmount, System.currentTimeMillis()));
-        when(userPointTable.insertOrUpdate(userId, chargeAmount)).thenReturn(expectedAmount);
+        when(userPointTable.insertOrUpdate(userId, initialAmount + chargeAmount)).thenReturn(expectedAmount);
 
         // when
         UserPoint actualUserPoint = pointService.chargeUserPoint(userId, chargeAmount);
