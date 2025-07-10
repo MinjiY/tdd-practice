@@ -22,7 +22,7 @@ public class PointService {
 
 
     public UserPoint getUserPoint(long userId) {
-        if(userId < 0) {
+        if(userId <= 0) {
             throw new IllegalArgumentException("400", "UserId는 0보다 큰 정수여야 합니다.");
         }
         return userPointTable.selectById(userId);
