@@ -8,6 +8,7 @@ import io.hhplus.tdd.point.UserPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -195,5 +196,44 @@ class PointServiceTest {
 
         assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
+    }
+
+
+    @Test
+    @DisplayName("chargeUserPoint 호출 시 pointHistoryTable.insert에 전달된 값이 올바른지 검증한다.")
+    void testChargePointHistoryInsertArguments() {
+        // given
+        long userId = 1L;
+        long initialAmount = 500L;
+        long chargeAmount = 200L;
+        TransactionType type = TransactionType.CHARGE;
+        long fixedTime = 123456789L; // 고정된 시간 사용
+
+        ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Long> amountCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<TransactionType> typeCaptor = ArgumentCaptor.forClass(TransactionType.class);
+        ArgumentCaptor<Long> updateMillisCaptor = ArgumentCaptor.forClass(Long.class);
+
+        UserPoint expectedUserPoint = new UserPoint(userId, initialAmount+chargeAmount, fixedTime);
+        when(userPointTable.selectById(userId)).thenReturn(new UserPoint(userId, initialAmount, fixedTime - 1000));
+        when(userPointTable.insertOrUpdate(userId, initialAmount+chargeAmount)).thenReturn(expectedUserPoint);
+        when(pointHistoryTable.insert(userId, chargeAmount, type, fixedTime))
+                .thenReturn(new PointHistory(1L, userId, chargeAmount, type, fixedTime));
+
+        // when
+        pointService.chargeUserPoint(userId, chargeAmount);
+
+        // then
+        verify(pointHistoryTable).insert(
+                userIdCaptor.capture(),
+                amountCaptor.capture(),
+                typeCaptor.capture(),
+                updateMillisCaptor.capture()
+        );
+
+        assertThat(userIdCaptor.getValue(), is(userId));
+        assertThat(amountCaptor.getValue(), is(chargeAmount));
+        assertThat(typeCaptor.getValue(), is(type));
+        assertThat(updateMillisCaptor.getValue(), is(fixedTime));
     }
 }
