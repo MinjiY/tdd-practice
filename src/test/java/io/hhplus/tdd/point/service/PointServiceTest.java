@@ -276,8 +276,8 @@ class PointServiceTest {
 
         when(userPointTable.selectById(userId)).thenReturn(beforeUserPoint);
         when(userPointTable.insertOrUpdate(userId, initialPoint - useAmount)).thenReturn(afterUserPoint);
-        // when
 
+        // when
         UserPoint actualUserPoint = pointService.useUserPoint(userId, useAmount);
 
         // then
@@ -285,5 +285,23 @@ class PointServiceTest {
         verify(userPointTable).insertOrUpdate(userId, useAmount);
         assertThat(actualUserPoint.getId(), is(afterUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(afterUserPoint.getPoint()));
+    }
+
+    @Test
+    @DisplayName("유저가 가지고 있는 포인트가 사용하려는 포인트보다 작을때 IllegalArgumentException이 발생한다.")
+    public void testUserPointUseInvalid() {
+        // given
+        long userId = 1L;
+        long initialPoint = 100L;
+        long useAmount = 1000L;
+
+        UserPoint beforeUserPoint = new UserPoint(userId, initialPoint, System.currentTimeMillis());
+
+        when(userPointTable.selectById(userId)).thenReturn(beforeUserPoint);
+
+        // when & then
+        assertThrows(IllegalArgumentException.class, () -> {
+            pointService.useUserPoint(userId, useAmount);
+        });
     }
 }
