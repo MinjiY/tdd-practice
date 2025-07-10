@@ -45,6 +45,14 @@ class PointServiceTest {
         assertThat(actualUserPoint.getPoint(), is(expectedPoint));
     }
 
+    @Test
+    @DisplayName("입력받는 유저의 ID는 음수일 때 IllegalArgumentException이 발생한다.")
+    public void testGetUserPointWithInvalidId() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            pointService.getUserPoint(-1L);
+        });
+    }
+
 
 
 }
