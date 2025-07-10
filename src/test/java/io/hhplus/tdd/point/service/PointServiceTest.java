@@ -127,6 +127,7 @@ class PointServiceTest {
         verify(userPointTable).insertOrUpdate(expectedUserPoint.getId(), expectedUserPoint.getPoint());
         assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
+
     }
 
     @Test
@@ -157,10 +158,48 @@ class PointServiceTest {
         // when
         UserPoint actualUserPoint = pointService.chargeUserPoint(userId, chargeAmount);
 
+        // then
         verify(userPointTable).selectById(userId);
         verify(userPointTable).insertOrUpdate(userId, initialAmount + chargeAmount);
         assertThat(actualUserPoint.getId(), is(expectedAmount.getId()));
         assertThat(actualUserPoint.getPoint(), is(expectedAmount.getPoint()));
         assertThat(actualUserPoint.getPoint(), is(expectedAmount.getPoint()));
+    }
+
+
+    @Test
+    @DisplayName("충전 후 포인트 내역에 충전한 금액과 현재 시간을 기록해야 한다.")
+    public void testUserPointChargeWithHistory() {
+        // given
+        long userId = 1L;
+        long initialAmount = 100L;
+        long chargeAmount = 50L;
+
+        UserPoint expectedUserPoint = new UserPoint(userId, initialAmount + chargeAmount, System.currentTimeMillis());
+        PointHistory expectedPointHistory = new PointHistory(1L, userId, chargeAmount, TransactionType.CHARGE, System.currentTimeMillis());
+
+        when(userPointTable.selectById(userId)).thenReturn(new UserPoint(userId, initialAmount, System.currentTimeMillis()));
+        when(userPointTable.insertOrUpdate(userId, initialAmount + chargeAmount)).thenReturn(expectedUserPoint);
+        when(pointHistoryTable.insert(userId, chargeAmount, TransactionType.CHARGE, System.currentTimeMillis()))
+                .thenReturn(expectedPointHistory);
+
+        // when
+        UserPoint actualUserPoint = pointService.chargeUserPoint(userId, chargeAmount);
+
+        // then
+        verify(userPointTable).selectById(userId);
+        verify(userPointTable).insertOrUpdate(userId, initialAmount + chargeAmount);
+        verify(pointHistoryTable).insert(userId, chargeAmount, TransactionType.CHARGE, System.currentTimeMillis());
+
+        assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
+        assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
+        assertThat(actualUserPoint.getUpdateMillis(), is(expectedUserPoint.getUpdateMillis()));
+
+
+        List<PointHistory> histories = pointService.getUserPointHistories(userId);
+        assertThat(histories.size(), is(1));
+        assertThat(histories.get(0).getUserId(), is(userId));
+        assertThat(histories.get(0).getAmount(), is(chargeAmount));
+        assertThat(histories.get(0).getType(), is(TransactionType.CHARGE));
     }
 }

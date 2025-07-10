@@ -17,4 +17,7 @@ public record UserPoint(
     public long getPoint() {
         return this.point;
     }
+    public long getUpdateMillis() {
+        return this.updateMillis;
+    }
 }
