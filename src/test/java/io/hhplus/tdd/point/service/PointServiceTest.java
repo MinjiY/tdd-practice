@@ -304,4 +304,36 @@ class PointServiceTest {
             pointService.useUserPoint(userId, useAmount);
         });
     }
+
+    @Test
+    @DisplayName("포인트를 사용한 후에는 포인트 내역에 사용 기록을 추가해야 한다.")
+    public void testUserPointUseHistory() {
+        // given
+        long userId = 1L;
+        long initialPoint = 1000L;
+        long useAmount = 500L;
+        long useTime = System.currentTimeMillis();
+
+        UserPoint beforeUserPoint = new UserPoint(userId, initialPoint, useTime - 1000);
+        UserPoint afterUserPoint = new UserPoint(userId, initialPoint - useAmount, useTime);
+
+        PointHistory expectedPointHistory = new PointHistory(1L, userId, useAmount, TransactionType.USE, useTime);
+
+        when(userPointTable.selectById(userId)).thenReturn(beforeUserPoint);
+        when(userPointTable.insertOrUpdate(userId, initialPoint - useAmount)).thenReturn(afterUserPoint);
+        when(pointHistoryTable.insert(userId, useAmount, TransactionType.USE, useTime))
+                .thenReturn(expectedPointHistory);
+
+        // when
+        UserPoint actualUserPoint = pointService.useUserPoint(userId, useAmount);
+
+        // then
+        verify(userPointTable).selectById(userId);
+        verify(userPointTable).insertOrUpdate(userId, initialPoint - useAmount);
+        verify(pointHistoryTable).insert(userId, useAmount, TransactionType.USE, useTime);
+
+        assertThat(actualUserPoint.getId(), is(afterUserPoint.getId()));
+        assertThat(actualUserPoint.getPoint(), is(afterUserPoint.getPoint()));
+    }
+
 }
