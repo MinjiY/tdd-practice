@@ -21,7 +21,7 @@ public class PointService {
 
 
     public UserPoint getUserPoint(long userId) {
-        throw new UnsupportedOperationException("not implemented yet");
+        return userPointTable.selectById(userId);
     }
 
 }
