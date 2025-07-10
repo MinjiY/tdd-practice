@@ -17,6 +17,7 @@ import io.hhplus.tdd.exception.IllegalArgumentException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.array;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -141,4 +142,25 @@ class PointServiceTest {
 
     }
 
+    @Test
+    @DisplayName("충전하는 포인트 금액은 유저가 갖고있는 현재 포인트에 더해져야 한다.")
+    public void testUserPointChargeAdd() {
+        // given
+        long userId = 1L;
+        long initialAmount = 100L;
+        long chargeAmount = 50L;
+
+        UserPoint expectedAmount = new UserPoint(userId, initialAmount + chargeAmount, System.currentTimeMillis());
+        when(userPointTable.selectById(userId)).thenReturn(new UserPoint(userId, initialAmount, System.currentTimeMillis()));
+        when(userPointTable.insertOrUpdate(userId, chargeAmount)).thenReturn(expectedAmount);
+
+        // when
+        UserPoint actualUserPoint = pointService.chargeUserPoint(userId, chargeAmount);
+
+        verify(userPointTable).selectById(userId);
+        verify(userPointTable).insertOrUpdate(userId, initialAmount + chargeAmount);
+        assertThat(actualUserPoint.getId(), is(expectedAmount.getId()));
+        assertThat(actualUserPoint.getPoint(), is(expectedAmount.getPoint()));
+        assertThat(actualUserPoint.getPoint(), is(expectedAmount.getPoint()));
+    }
 }
