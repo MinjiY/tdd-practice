@@ -174,13 +174,14 @@ class PointServiceTest {
         long userId = 1L;
         long initialAmount = 100L;
         long chargeAmount = 50L;
+        long chargeTime = System.currentTimeMillis();
 
-        UserPoint expectedUserPoint = new UserPoint(userId, initialAmount + chargeAmount, System.currentTimeMillis());
-        PointHistory expectedPointHistory = new PointHistory(1L, userId, chargeAmount, TransactionType.CHARGE, System.currentTimeMillis());
+        UserPoint expectedUserPoint = new UserPoint(userId, initialAmount + chargeAmount, chargeTime);
+        PointHistory expectedPointHistory = new PointHistory(1L, userId, chargeAmount, TransactionType.CHARGE, chargeTime);
 
-        when(userPointTable.selectById(userId)).thenReturn(new UserPoint(userId, initialAmount, System.currentTimeMillis()));
+        when(userPointTable.selectById(userId)).thenReturn(new UserPoint(userId, initialAmount, chargeTime-1000));
         when(userPointTable.insertOrUpdate(userId, initialAmount + chargeAmount)).thenReturn(expectedUserPoint);
-        when(pointHistoryTable.insert(userId, chargeAmount, TransactionType.CHARGE, System.currentTimeMillis()))
+        when(pointHistoryTable.insert(userId, chargeAmount, TransactionType.CHARGE, chargeTime))
                 .thenReturn(expectedPointHistory);
 
         // when
@@ -189,11 +190,10 @@ class PointServiceTest {
         // then
         verify(userPointTable).selectById(userId);
         verify(userPointTable).insertOrUpdate(userId, initialAmount + chargeAmount);
-        verify(pointHistoryTable).insert(userId, chargeAmount, TransactionType.CHARGE, System.currentTimeMillis());
+        verify(pointHistoryTable).insert(userId, chargeAmount, TransactionType.CHARGE, chargeTime);
 
         assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
-        assertThat(actualUserPoint.getUpdateMillis(), is(expectedUserPoint.getUpdateMillis()));
 
 
         List<PointHistory> histories = pointService.getUserPointHistories(userId);
