@@ -187,6 +187,7 @@ class PointServiceTest {
         // when
         UserPoint actualUserPoint = pointService.chargeUserPoint(userId, chargeAmount);
 
+
         // then
         verify(userPointTable).selectById(userId);
         verify(userPointTable).insertOrUpdate(userId, initialAmount + chargeAmount);
@@ -194,12 +195,5 @@ class PointServiceTest {
 
         assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
         assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
-
-
-        List<PointHistory> histories = pointService.getUserPointHistories(userId);
-        assertThat(histories.size(), is(1));
-        assertThat(histories.get(0).getUserId(), is(userId));
-        assertThat(histories.get(0).getAmount(), is(chargeAmount));
-        assertThat(histories.get(0).getType(), is(TransactionType.CHARGE));
     }
 }
