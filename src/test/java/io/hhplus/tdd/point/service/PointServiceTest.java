@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,8 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.array;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -235,5 +235,31 @@ class PointServiceTest {
         assertThat(amountCaptor.getValue(), is(chargeAmount));
         assertThat(typeCaptor.getValue(), is(type));
         assertThat(updateMillisCaptor.getValue(), is(fixedTime));
+    }
+
+    @Test
+    @DisplayName("충전 기록보다 포인트 충전 여부가 먼저 결정되어야 한다.")
+    void testChargeMethodCallOrder() {
+        // given
+        long userId = 1L;
+        long initialAmount = 100L;
+        long chargeAmount = 50L;
+        long chargeTime = System.currentTimeMillis();
+
+        UserPoint expectedUserPoint = new UserPoint(userId, initialAmount + chargeAmount, chargeTime);
+        PointHistory expectedPointHistory = new PointHistory(1L, userId, chargeAmount, TransactionType.CHARGE, chargeTime);
+
+        when(userPointTable.selectById(userId)).thenReturn(new UserPoint(userId, initialAmount, chargeTime-1000));
+        when(userPointTable.insertOrUpdate(userId, initialAmount + chargeAmount)).thenReturn(expectedUserPoint);
+        when(pointHistoryTable.insert(userId, chargeAmount, TransactionType.CHARGE, chargeTime))
+                .thenReturn(expectedPointHistory);
+
+        // when
+        pointService.chargeUserPoint(userId, chargeAmount);
+
+        // then
+        InOrder inOrder = inOrder(userPointTable, pointHistoryTable);
+        inOrder.verify(userPointTable).insertOrUpdate(userId, initialAmount+chargeAmount);
+        inOrder.verify(pointHistoryTable).insert(eq(userId), eq(chargeAmount), eq(TransactionType.CHARGE), anyLong());
     }
 }
