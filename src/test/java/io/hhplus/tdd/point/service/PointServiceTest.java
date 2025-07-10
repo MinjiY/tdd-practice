@@ -262,4 +262,28 @@ class PointServiceTest {
         inOrder.verify(userPointTable).insertOrUpdate(userId, initialAmount+chargeAmount);
         inOrder.verify(pointHistoryTable).insert(eq(userId), eq(chargeAmount), eq(TransactionType.CHARGE), anyLong());
     }
+
+    @Test
+    @DisplayName("유저의 ID와 사용할 포인트 금액을 입력받아 입력받은 값으로 포인트를 사용해야한다.")
+    public void testUserPointUse() {
+        // given
+        long userId = 1L;
+        long initialPoint = 1000L;
+        long useAmount = 500L;
+
+        UserPoint beforeUserPoint = new UserPoint(userId, initialPoint, System.currentTimeMillis());
+        UserPoint afterUserPoint = new UserPoint(userId, initialPoint - useAmount, System.currentTimeMillis());
+
+        when(userPointTable.selectById(userId)).thenReturn(beforeUserPoint);
+        when(userPointTable.insertOrUpdate(userId, initialPoint - useAmount)).thenReturn(afterUserPoint);
+        // when
+
+        UserPoint actualUserPoint = pointService.useUserPoint(userId, useAmount);
+
+        // then
+        verify(userPointTable).selectById(userId);
+        verify(userPointTable).insertOrUpdate(userId, useAmount);
+        assertThat(actualUserPoint.getId(), is(afterUserPoint.getId()));
+        assertThat(actualUserPoint.getPoint(), is(afterUserPoint.getPoint()));
+    }
 }

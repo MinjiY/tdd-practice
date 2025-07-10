@@ -60,4 +60,14 @@ public class PointService {
         pointHistoryTable.insert(userId, amount, TransactionType.CHARGE, userPoint.getUpdateMillis());
         return userPoint;
     }
+    /**
+     * 특정 유저의 포인트를 이용하는 기능
+     *
+     * @param userId 유저 ID
+     * @param amount 이용할 포인트 금액
+     * @return UserPoint 객체
+     */
+    public UserPoint useUserPoint(long userId, long amount) {
+        throw new UnsupportedOperationException("포인트 이용 기능은 아직 구현되지 않았습니다.");
+    }
 }
