@@ -44,4 +44,15 @@ public class PointService {
     public List<PointHistory> getUserPointHistories(long userId) {
         return pointHistoryTable.selectAllByUserId(userId);
     }
+
+    /**
+     * 특정 유저의 포인트를 충전하는 기능
+     *
+     * @param userId 유저 ID
+     * @param amount 충전할 포인트 금액
+     * @return UserPoint 객체
+     */
+    public UserPoint chargeUserPoint(long userId, long amount) {
+        throw new UnsupportedOperationException("충전 기능은 아직 구현되지 않았습니다.");
+    }
 }

@@ -107,4 +107,24 @@ class PointServiceTest {
         assertThat(actualHistories.get(0).getAmount(), is(expectedPointHistory.getAmount()));
         assertThat(actualHistories.get(0).getType(), is(expectedPointHistory.getType()));
     }
+
+    @Test
+    @DisplayName("유저의 ID와 충전할 포인트 금액을 입력받아 입력받은 값으로 포인트를 충전해야한다.")
+    public void testUserPointCharge() {
+        // given
+        long userId = 1L;
+        long amount = 100L;
+
+        UserPoint expectedUserPoint = new UserPoint(userId, amount, System.currentTimeMillis());
+        when(userPointTable.insertOrUpdate(userId, amount)).thenReturn(expectedUserPoint);
+
+
+        // when
+        UserPoint actualUserPoint = pointService.chargeUserPoint(userId, amount);
+
+        // then
+        assertThat(actualUserPoint.getId(), is(expectedUserPoint.getId()));
+        assertThat(actualUserPoint.getPoint(), is(expectedUserPoint.getPoint()));
+    }
+
 }
