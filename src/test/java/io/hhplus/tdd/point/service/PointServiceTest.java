@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import io.hhplus.tdd.exception.IllegalArgumentException;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -50,6 +52,14 @@ class PointServiceTest {
     public void testGetUserPointWithInvalidId() {
         assertThrows(IllegalArgumentException.class, () -> {
             pointService.getUserPoint(-1L);
+        });
+    }
+
+    @Test
+    @DisplayName("입력받는 유저의 ID는 0일 때 IllegalArgumentException이 발생한다.")
+    public void testGetUserPointWithZeroId() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            pointService.getUserPoint(0);
         });
     }
 
