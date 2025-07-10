@@ -19,34 +19,5 @@ public class PointService {
     private final UserPointTable userPointTable;
     private final PointHistoryTable pointHistoryTable;
 
-    public UserPoint getUserPoint(long userId) {
-        return userPointTable.selectById(userId);
-    }
 
-    /**
-     * 특정 유저의 포인트 충전/이용 내역을 조회
-     */
-    public List<PointHistory> getHistories (long id) {
-        return pointHistoryTable.selectAllByUserId(id);
-    }
-
-    /**
-     * 특정 유저의 포인트를 충전하는 기능
-     */
-    public UserPoint charge(long id, long amount) {
-        UserPoint userPoint = userPointTable.insertOrUpdate(id, amount);
-        pointHistoryTable.insert(userPoint.getId(), userPoint.getPoint(), TransactionType.CHARGE, System.currentTimeMillis());
-        return userPoint;
-    }
-
-    /**
-     * 특정 유저의 포인트를 사용하는 기능
-     */
-    public UserPoint use(long id, long amount) {
-        UserPoint userPoint = userPointTable.selectById(id);
-        if(userPoint.getPoint() < amount) {
-            throw new IllegalArgumentException("400","포인트가 부족합니다.");
-        }
-        return userPointTable.insertOrUpdate(id, userPoint.getPoint()-amount);
-    }
 }
