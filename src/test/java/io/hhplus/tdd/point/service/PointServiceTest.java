@@ -3,6 +3,7 @@ package io.hhplus.tdd.point.service;
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.PointHistory;
+import io.hhplus.tdd.point.TransactionType;
 import io.hhplus.tdd.point.UserPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -68,7 +70,7 @@ class PointServiceTest {
 
     @Test
     @DisplayName("포인트 충전/사용 내역을 조회할 때에는 포인트 이용내역이 없을때 에러가 아닌 빈리스트를 반환해야한다.")
-    public void testGetUserPointHistories() {
+    public void testGetUserPointHistoriesEmptyList() {
         // given
         long userId = 1L;
 
@@ -82,4 +84,27 @@ class PointServiceTest {
         assertTrue(actualHistories.isEmpty());
     }
 
+    @Test
+    @DisplayName("유저의 ID를 입력받아 해당 ID에 맞는 포인트 충전/이용 내역을 반환해야한다.")
+    public void testGetUserPointHistories() {
+        // given
+        long pointHistoryId = 1L;
+        long userId = 1L;
+        long amount = 100L;
+
+        PointHistory expectedPointHistory = new PointHistory(pointHistoryId, userId, amount, TransactionType.CHARGE, System.currentTimeMillis());
+        when(pointHistoryTable.selectAllByUserId(userId)).thenReturn(List.of(expectedPointHistory));
+
+        //when
+        List<PointHistory> actualHistories = pointService.getUserPointHistories(userId);
+
+        // then
+        verify(pointHistoryTable).selectAllByUserId(userId);
+        assertNotNull(actualHistories);
+        assertThat(actualHistories.size(), is(1));
+        assertThat(actualHistories.get(0).getId(), is(expectedPointHistory.getId()));
+        assertThat(actualHistories.get(0).getUserId(), is(expectedPointHistory.getUserId()));
+        assertThat(actualHistories.get(0).getAmount(), is(expectedPointHistory.getAmount()));
+        assertThat(actualHistories.get(0).getType(), is(expectedPointHistory.getType()));
+    }
 }
