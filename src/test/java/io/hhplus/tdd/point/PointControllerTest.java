@@ -60,5 +60,22 @@ class PointControllerTest {
                 .andExpect(jsonPath("$.point").value(initialAmount + chargeAmount));
     }
 
+    @Test
+    @DisplayName("유저의 포인트 사용 API")
+    void usePointApi_success() throws Exception {
+        // given
+        long userId = 1L;
+        long initialAmount = 1000L;
+        long useAmount = 300L;
+
+        userPointTable.insertOrUpdate(userId, initialAmount);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/point/{id}/use", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(String.valueOf(useAmount)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userId))
+                .andExpect(jsonPath("$.point").value(initialAmount - useAmount));
+    }
 
 }
